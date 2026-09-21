@@ -10,7 +10,6 @@ let io;
 const onlineUsers = new Map();
 
 export const initializeSocket = (server) => {
-
     io = new Server(server, {
         cors: {
             origin: "http://localhost:5173",
@@ -23,13 +22,13 @@ export const initializeSocket = (server) => {
     // ===============================
 
     io.use(async (socket, next) => {
-
         try {
-
             const token = socket.handshake.auth.token;
 
             if (!token) {
-                return next(new Error("Authentication Error"));
+                return next(
+                    new Error("Authentication Error")
+                );
             }
 
             const decoded = jwt.verify(
@@ -37,10 +36,14 @@ export const initializeSocket = (server) => {
                 process.env.JWT_SECRET
             );
 
-            const user = await User.findById(decoded.id).select("-password");
+            const user = await User.findById(
+                decoded.id
+            ).select("-password");
 
             if (!user) {
-                return next(new Error("User Not Found"));
+                return next(
+                    new Error("User Not Found")
+                );
             }
 
             socket.user = user;
@@ -48,11 +51,15 @@ export const initializeSocket = (server) => {
             next();
 
         } catch (error) {
+            console.log(
+                "Socket authentication error:",
+                error.message
+            );
 
-            next(new Error("Authentication Error"));
-
+            next(
+                new Error("Authentication Error")
+            );
         }
-
     });
 
     // ===============================
@@ -60,248 +67,268 @@ export const initializeSocket = (server) => {
     // ===============================
 
     io.on("connection", (socket) => {
-
         console.log(
             `✅ ${socket.user.name} connected (${socket.id})`
         );
 
-        // online user
-        onlineUsers.set(
-
-    socket.user._id.toString(),
-
-    socket.id
-
-);
-
-io.emit(
-
-    "onlineUsers",
-
-    [...onlineUsers.keys()]
-
-);
         // ===============================
-// Personal Notification Room
-// ===============================
+        // Online User
+        // ===============================
 
-socket.join(socket.user._id.toString());
+        onlineUsers.set(
+            socket.user._id.toString(),
+            socket.id
+        );
 
-console.log(
-    `${socket.user.name} joined personal room`
-);
+        io.emit(
+            "onlineUsers",
+            [...onlineUsers.keys()]
+        );
+
+        // ===============================
+        // Personal Notification Room
+        // ===============================
+
+        socket.join(
+            socket.user._id.toString()
+        );
+
+        console.log(
+            `${socket.user.name} joined personal room`
+        );
 
         // ===============================
         // Join Trip Room
         // ===============================
 
-        socket.on("joinTrip", async (tripId) => {
+        socket.on(
+            "joinTrip",
+            async (tripId) => {
+                try {
+                    const trip =
+                        await Trip.findById(tripId);
 
-            try {
+                    if (!trip) {
+                        socket.emit(
+                            "error",
+                            "Trip Not Found"
+                        );
 
-                const trip = await Trip.findById(tripId);
+                        return;
+                    }
 
-                if (!trip) {
+                    const userId =
+                        socket.user._id.toString();
 
-                    socket.emit("error", "Trip Not Found");
+                    const organizerId =
+                        trip.createdBy?.toString();
 
-                    return;
+                    const isOrganizer =
+                        organizerId === userId;
 
-                }
+                    const isParticipant =
+                        trip.participants.some(
+                            (participant) =>
+                                participant.toString() ===
+                                userId
+                        );
 
-                const isParticipant = trip.participants.some(
+                    const hasChatAccess =
+                        isOrganizer ||
+                        isParticipant;
 
-                    participant =>
+                    if (!hasChatAccess) {
+                        socket.emit(
+                            "error",
+                            "You are not allowed to access this chat"
+                        );
 
-                        participant.toString() ===
-                        socket.user._id.toString()
+                        return;
+                    }
 
-                );
+                    socket.join(tripId);
 
-                if (!isParticipant) {
-
-                    socket.emit(
-                        "error",
-                        "You are not a participant of this trip"
+                    console.log(
+                        `${socket.user.name} joined room ${tripId}`
                     );
 
-                    return;
-
+                } catch (error) {
+                    console.log(
+                        "Join trip socket error:",
+                        error
+                    );
                 }
-
-                socket.join(tripId);
-
-                console.log(
-                    `${socket.user.name} joined room ${tripId}`
-                );
-
-            } catch (error) {
-
-                console.log(error);
-
             }
-
-        });
+        );
 
         // ===============================
         // Leave Trip
         // ===============================
 
-        socket.on("leaveTrip", (tripId) => {
+        socket.on(
+            "leaveTrip",
+            (tripId) => {
+                socket.leave(tripId);
 
-            socket.leave(tripId);
-
-            console.log(
-                `${socket.user.name} left room ${tripId}`
-            );
-
-        });
+                console.log(
+                    `${socket.user.name} left room ${tripId}`
+                );
+            }
+        );
 
         // ===============================
         // Send Message
         // ===============================
 
-        socket.on("sendMessage", async (data) => {
+        socket.on(
+            "sendMessage",
+            async (data) => {
+                try {
+                    const {
+                        tripId,
+                        message
+                    } = data;
 
-            try {
+                    if (
+                        !tripId ||
+                        !message ||
+                        !message.trim()
+                    ) {
+                        return;
+                    }
 
-                const {
+                    const trip =
+                        await Trip.findById(tripId);
 
-                    tripId,
+                    if (!trip) {
+                        socket.emit(
+                            "error",
+                            "Trip Not Found"
+                        );
 
-                    message
+                        return;
+                    }
 
-                } = data;
+                    const userId =
+                        socket.user._id.toString();
 
-                const trip = await Trip.findById(tripId);
+                    const organizerId =
+                        trip.createdBy?.toString();
 
-                if (!trip) {
+                    const isOrganizer =
+                        organizerId === userId;
 
-                    socket.emit("error", "Trip Not Found");
+                    const isParticipant =
+                        trip.participants.some(
+                            (participant) =>
+                                participant.toString() ===
+                                userId
+                        );
 
-                    return;
+                    const hasChatAccess =
+                        isOrganizer ||
+                        isParticipant;
 
-                }
+                    if (!hasChatAccess) {
+                        socket.emit(
+                            "error",
+                            "You are not allowed to send messages"
+                        );
 
-                const isParticipant = trip.participants.some(
+                        return;
+                    }
 
-                    participant =>
+                    const chat =
+                        await Chat.create({
+                            trip: tripId,
+                            sender: socket.user._id,
+                            message: message.trim()
+                        });
 
-                        participant.toString() ===
-                        socket.user._id.toString()
+                    const populatedMessage =
+                        await Chat.findById(
+                            chat._id
+                        ).populate(
+                            "sender",
+                            "name username profileImage"
+                        );
 
-                );
+                    io.to(tripId).emit(
+                        "receiveMessage",
+                        populatedMessage
+                    );
 
-                if (!isParticipant) {
+                } catch (error) {
+                    console.log(
+                        "Send message socket error:",
+                        error
+                    );
 
                     socket.emit(
                         "error",
-                        "You are not allowed to send messages"
+                        "Unable to send message"
                     );
-
-                    return;
-
                 }
-
-                const chat = await Chat.create({
-
-                    trip: tripId,
-
-                    sender: socket.user._id,
-
-                    message
-
-                });
-
-                const populatedMessage = await Chat.findById(chat._id)
-
-                    .populate(
-                        "sender",
-                        "name username profileImage"
-                    );
-
-                io.to(tripId).emit(
-
-                    "receiveMessage",
-
-                    populatedMessage
-
-                );
-
-            } catch (error) {
-
-                console.log(error);
-
             }
-
-        });
+        );
 
         // ===============================
         // Typing Indicator
         // ===============================
 
-        socket.on("typing", (tripId) => {
+        socket.on(
+            "typing",
+            (tripId) => {
+                socket
+                    .to(tripId)
+                    .emit(
+                        "typing",
+                        socket.user.name
+                    );
+            }
+        );
 
-            socket.to(tripId).emit(
-
-                "typing",
-
-                socket.user.name
-
-            );
-
-        });
-
-        socket.on("stopTyping", (tripId) => {
-
-            socket.to(tripId).emit(
-
-                "stopTyping"
-
-            );
-
-        });
+        socket.on(
+            "stopTyping",
+            (tripId) => {
+                socket
+                    .to(tripId)
+                    .emit(
+                        "stopTyping"
+                    );
+            }
+        );
 
         // ===============================
         // Disconnect
         // ===============================
 
-        socket.on("disconnect", () => {
+        socket.on(
+            "disconnect",
+            () => {
+                onlineUsers.delete(
+                    socket.user._id.toString()
+                );
 
-    onlineUsers.delete(
+                io.emit(
+                    "onlineUsers",
+                    [...onlineUsers.keys()]
+                );
 
-        socket.user._id.toString()
-
-    );
-
-    io.emit(
-
-        "onlineUsers",
-
-        [...onlineUsers.keys()]
-
-    );
-
-    console.log(
-
-        `❌ ${socket.user.name} disconnected`
-
-    );
-
-});
-
+                console.log(
+                    `❌ ${socket.user.name} disconnected`
+                );
+            }
+        );
     });
-
 };
 
 export const getIO = () => {
-
     if (!io) {
-
-        throw new Error("Socket.IO has not been initialized");
-
+        throw new Error(
+            "Socket.IO has not been initialized"
+        );
     }
 
     return io;
-
 };

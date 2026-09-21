@@ -1,0 +1,1082 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Mr+Dafoe&display=swap");
+
+.login-page {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #050507;
+    color: white;
+    font-family: "DM Sans", sans-serif;
+}
+
+/* ========================================
+   BACKGROUND
+======================================== */
+
+.login-background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.login-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+}
+
+.login-glow-one {
+    width: 500px;
+    height: 500px;
+    top: -180px;
+    left: -140px;
+    background: rgba(99, 91, 255, 0.14);
+}
+
+.login-glow-two {
+    width: 430px;
+    height: 430px;
+    right: -100px;
+    bottom: -120px;
+    background: rgba(34, 211, 238, 0.09);
+}
+
+.login-glow-three {
+    width: 280px;
+    height: 280px;
+    left: 48%;
+    top: 35%;
+    background: rgba(168, 156, 255, 0.045);
+}
+
+.login-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.22;
+    background-image:
+        linear-gradient(
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        );
+    background-size: 70px 70px;
+    mask-image: radial-gradient(
+        ellipse at center,
+        black 0%,
+        transparent 75%
+    );
+    -webkit-mask-image: radial-gradient(
+        ellipse at center,
+        black 0%,
+        transparent 75%
+    );
+}
+
+.login-stars {
+    position: absolute;
+    inset: 0;
+}
+
+.login-stars span {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow:
+        0 0 12px rgba(255, 255, 255, 0.4);
+    animation: starPulse 3s ease-in-out infinite;
+}
+
+.login-stars span:nth-child(1) {
+    top: 18%;
+    left: 17%;
+    animation-delay: 0s;
+}
+
+.login-stars span:nth-child(2) {
+    top: 28%;
+    right: 18%;
+    animation-delay: 0.8s;
+}
+
+.login-stars span:nth-child(3) {
+    top: 65%;
+    left: 12%;
+    animation-delay: 1.5s;
+}
+
+.login-stars span:nth-child(4) {
+    top: 76%;
+    right: 13%;
+    animation-delay: 2.1s;
+}
+
+.login-stars span:nth-child(5) {
+    top: 12%;
+    right: 42%;
+    animation-delay: 1.1s;
+}
+
+.login-stars span:nth-child(6) {
+    bottom: 20%;
+    left: 38%;
+    animation-delay: 2.5s;
+}
+
+@keyframes starPulse {
+    0%,
+    100% {
+        opacity: 0.25;
+        transform: scale(0.7);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.4);
+    }
+}
+
+/* ========================================
+   MOUNTAINS
+======================================== */
+
+.login-mountains {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -10px;
+    height: 250px;
+    opacity: 0.2;
+}
+
+.mountain {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 230px solid transparent;
+    border-right: 230px solid transparent;
+    border-bottom: 270px solid #101016;
+}
+
+.mountain::after {
+    content: "";
+    position: absolute;
+    left: -230px;
+    top: 55px;
+    width: 0;
+    height: 0;
+    border-left: 230px solid transparent;
+    border-right: 230px solid transparent;
+    border-bottom: 215px solid rgba(255, 255, 255, 0.025);
+}
+
+.mountain-one {
+    left: -100px;
+    transform: scale(1.2);
+}
+
+.mountain-two {
+    left: 34%;
+    bottom: -35px;
+    transform: scale(0.9);
+}
+
+.mountain-three {
+    right: -130px;
+    bottom: -20px;
+    transform: scale(1.1);
+}
+
+/* ========================================
+   TRAVEL DOODLES
+======================================== */
+
+.travel-doodles {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.travel-doodle {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(190, 184, 255, 0.5);
+    filter: drop-shadow(
+        0 0 18px rgba(99, 91, 255, 0.15)
+    );
+}
+
+.doodle-compass {
+    top: 17%;
+    left: 8%;
+    width: 75px;
+    height: 75px;
+    border: 1px solid rgba(190, 184, 255, 0.18);
+    border-radius: 50%;
+    animation: compassFloat 6s ease-in-out infinite;
+}
+
+.doodle-plane {
+    top: 19%;
+    right: 10%;
+    transform: rotate(-18deg);
+    animation: planeFloat 7s ease-in-out infinite;
+}
+
+.doodle-mountain {
+    bottom: 22%;
+    left: 8%;
+    animation: doodleFloat 5s ease-in-out infinite;
+}
+
+.doodle-map {
+    bottom: 19%;
+    right: 9%;
+    transform: rotate(7deg);
+    animation: doodleFloat 6s ease-in-out infinite 1s;
+}
+
+.doodle-navigation {
+    top: 44%;
+    left: 5%;
+    animation: doodleFloat 5.5s ease-in-out infinite 1.5s;
+}
+
+.doodle-sparkle {
+    top: 33%;
+    right: 8%;
+    color: rgba(255, 255, 255, 0.5);
+    animation: sparkleFloat 4s ease-in-out infinite;
+}
+
+@keyframes compassFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(12deg);
+    }
+}
+
+@keyframes planeFloat {
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(-18deg);
+    }
+
+    50% {
+        transform: translate(-18px, -14px) rotate(-12deg);
+    }
+}
+
+@keyframes doodleFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(3deg);
+    }
+}
+
+@keyframes sparkleFloat {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(0.85) rotate(0deg);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.15) rotate(15deg);
+    }
+}
+
+/* ========================================
+   CYCLIST
+======================================== */
+
+.cyclist-route {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18%;
+    height: 80px;
+    overflow: hidden;
+}
+
+.route-line {
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    bottom: 15px;
+    height: 1px;
+    border-bottom: 1px dashed rgba(168, 156, 255, 0.2);
+}
+
+.cyclist {
+    position: absolute;
+    left: -70px;
+    bottom: 10px;
+    color: rgba(190, 184, 255, 0.6);
+    animation: cyclistRide 14s linear infinite;
+}
+
+@keyframes cyclistRide {
+    0% {
+        left: -70px;
+        transform: translateY(0) rotate(-2deg);
+    }
+
+    20% {
+        transform: translateY(-5px) rotate(1deg);
+    }
+
+    40% {
+        transform: translateY(0) rotate(-1deg);
+    }
+
+    60% {
+        transform: translateY(-4px) rotate(1deg);
+    }
+
+    80% {
+        transform: translateY(0) rotate(-1deg);
+    }
+
+    100% {
+        left: calc(100% + 70px);
+        transform: translateY(-2px) rotate(0deg);
+    }
+}
+
+/* ========================================
+   TRAVEL STICKER
+======================================== */
+
+.travel-sticker {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 92px;
+    height: 92px;
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    background: rgba(99, 91, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+    transform: rotate(-12deg);
+    animation: stickerFloat 5s ease-in-out infinite;
+}
+
+.sticker-adventure {
+    top: 67%;
+    right: 18%;
+}
+
+.travel-sticker span {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.travel-sticker small {
+    margin-top: 2px;
+    font-size: 7px;
+    letter-spacing: 2px;
+}
+
+@keyframes stickerFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(-12deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(-5deg);
+    }
+}
+
+/* ========================================
+   BRAND
+======================================== */
+
+.login-brand {
+    position: absolute;
+    z-index: 20;
+    top: 32px;
+    left: 42px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: white;
+    text-decoration: none;
+}
+
+.login-brand-mark {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #635bff;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    box-shadow:
+        0 10px 30px rgba(99, 91, 255, 0.3);
+}
+
+.login-brand-name {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* ========================================
+   MAIN
+======================================== */
+
+.login-main {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 110px 25px 70px;
+}
+
+.login-content {
+    width: min(460px, 100%);
+}
+
+/* ========================================
+   INTRO
+======================================== */
+
+.login-intro {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.login-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 17px;
+    color: rgba(190, 184, 255, 0.75);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.eyebrow-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #8f87ff;
+    box-shadow:
+        0 0 12px rgba(143, 135, 255, 0.8);
+}
+
+.login-intro h1 {
+    margin: 0;
+    color: white;
+    font-size: clamp(44px, 5vw, 58px);
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -3px;
+}
+
+.login-intro h1 span {
+    margin-left: 9px;
+    color: #c4bdff;
+    font-family: "Mr Dafoe", cursive;
+    font-size: 1.25em;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+.login-intro p {
+    max-width: 350px;
+    margin: 18px auto 0;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* ========================================
+   LOGIN CARD
+======================================== */
+
+.login-card {
+    position: relative;
+    overflow: hidden;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 28px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.075),
+            rgba(255, 255, 255, 0.025)
+        );
+    box-shadow:
+        0 35px 100px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+}
+
+.login-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(168, 156, 255, 0.7),
+        transparent
+    );
+}
+
+.login-card-glow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: -120px;
+    right: -60px;
+    border-radius: 50%;
+    background: rgba(99, 91, 255, 0.12);
+    filter: blur(60px);
+    pointer-events: none;
+}
+
+/* ========================================
+   CARD HEADER
+======================================== */
+
+.login-card-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+
+.login-card-label {
+    display: block;
+    margin-bottom: 9px;
+    color: #8f87ff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.login-card-top h2 {
+    margin: 0;
+    color: white;
+    font-size: 25px;
+    font-weight: 600;
+    letter-spacing: -0.8px;
+}
+
+.login-card-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(168, 156, 255, 0.2);
+    border-radius: 14px;
+    background: rgba(99, 91, 255, 0.1);
+    color: #aaa4ff;
+}
+
+/* ========================================
+   FORM
+======================================== */
+
+.login-form {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-field label {
+    margin-bottom: 9px;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.login-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 56px;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 15px;
+    background: rgba(5, 5, 8, 0.55);
+    transition:
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.login-input-wrapper:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.login-input-wrapper:focus-within {
+    border-color: rgba(126, 116, 255, 0.75);
+    background: rgba(7, 7, 12, 0.72);
+    box-shadow:
+        0 0 0 4px rgba(99, 91, 255, 0.09),
+        0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.login-input-wrapper.error {
+    border-color: rgba(248, 113, 113, 0.65);
+}
+
+.login-input-icon {
+    width: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.login-input-wrapper:focus-within .login-input-icon {
+    color: #aaa4ff;
+}
+
+.login-input-wrapper input {
+    width: 100%;
+    height: 100%;
+    padding: 0 15px 0 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.login-input-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.27);
+}
+
+.password-toggle {
+    width: 48px;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.login-error {
+    margin-top: 7px;
+    color: #fca5a5;
+    font-size: 11px;
+}
+
+/* ========================================
+   SUBMIT
+======================================== */
+
+.login-submit {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 56px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 15px;
+    background: linear-gradient(
+        135deg,
+        #635bff,
+        #766dff
+    );
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow:
+        0 16px 35px rgba(99, 91, 255, 0.22);
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+.login-submit::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -110%;
+    width: 75%;
+    height: 100%;
+    transform: skewX(-20deg);
+    background: rgba(255, 255, 255, 0.18);
+    transition: left 0.6s ease;
+}
+
+.login-submit:hover::before {
+    left: 135%;
+}
+
+.login-submit:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 20px 45px rgba(99, 91, 255, 0.3);
+    filter: brightness(1.05);
+}
+
+.login-submit:active {
+    transform: translateY(0);
+}
+
+.login-submit span,
+.login-submit svg {
+    position: relative;
+    z-index: 1;
+}
+
+.login-submit svg {
+    transition: transform 0.25s ease;
+}
+
+.login-submit:hover svg {
+    transform: translateX(4px);
+}
+
+.login-submit.loading {
+    cursor: wait;
+    opacity: 0.85;
+}
+
+.login-spinner {
+    width: 17px;
+    height: 17px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: loginSpin 0.7s linear infinite;
+}
+
+@keyframes loginSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========================================
+   REGISTER
+======================================== */
+
+.login-register {
+    position: relative;
+    z-index: 1;
+    margin-top: 24px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 12px;
+}
+
+.login-register a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #aaa4ff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.login-register a:hover {
+    color: white;
+}
+
+.login-register a svg {
+    transition: transform 0.2s ease;
+}
+
+.login-register a:hover svg {
+    transform: translateX(3px);
+}
+
+/* ========================================
+   FOOTER NOTE
+======================================== */
+
+.login-footer-note {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.login-footer-note span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.22);
+    font-size: 10px;
+}
+
+.login-footer-note svg {
+    color: rgba(168, 156, 255, 0.5);
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 900px) {
+    .doodle-navigation {
+        left: 3%;
+    }
+
+    .doodle-compass {
+        left: 5%;
+    }
+
+    .doodle-plane {
+        right: 5%;
+    }
+
+    .doodle-map {
+        right: 5%;
+    }
+
+    .sticker-adventure {
+        right: 8%;
+    }
+
+    .login-main {
+        padding-top: 105px;
+    }
+}
+
+@media (max-width: 650px) {
+    .login-page {
+        min-height: 100svh;
+    }
+
+    .login-brand {
+        top: 20px;
+        left: 20px;
+    }
+
+    .login-brand-mark {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        font-size: 18px;
+    }
+
+    .login-brand-name {
+        font-size: 17px;
+    }
+
+    .login-main {
+        min-height: 100svh;
+        padding: 90px 18px 35px;
+    }
+
+    .login-intro {
+        margin-bottom: 20px;
+    }
+
+    .login-intro h1 {
+        font-size: 44px;
+        letter-spacing: -2px;
+    }
+
+    .login-intro p {
+        font-size: 13px;
+        max-width: 310px;
+    }
+
+    .login-card {
+        padding: 23px;
+        border-radius: 23px;
+    }
+
+    .login-card-top h2 {
+        font-size: 22px;
+    }
+
+    .login-card-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .login-input-wrapper,
+    .login-submit {
+        height: 53px;
+    }
+
+    .travel-doodle {
+        opacity: 0.55;
+    }
+
+    .doodle-compass {
+        top: 13%;
+        left: 3%;
+        transform: scale(0.7);
+    }
+
+    .doodle-plane {
+        top: 14%;
+        right: 3%;
+        transform: scale(0.7) rotate(-18deg);
+    }
+
+    .doodle-mountain {
+        bottom: 8%;
+        left: 2%;
+        transform: scale(0.7);
+    }
+
+    .doodle-map {
+        right: 2%;
+        bottom: 10%;
+        transform: scale(0.7) rotate(7deg);
+    }
+
+    .doodle-navigation {
+        display: none;
+    }
+
+    .doodle-sparkle {
+        right: 10%;
+        top: 32%;
+    }
+
+    .sticker-adventure {
+        display: none;
+    }
+
+    .cyclist-route {
+        bottom: 7%;
+        opacity: 0.55;
+    }
+
+    .login-mountains {
+        height: 150px;
+    }
+
+    .mountain {
+        border-left-width: 150px;
+        border-right-width: 150px;
+        border-bottom-width: 180px;
+    }
+
+    .mountain::after {
+        left: -150px;
+        top: 38px;
+        border-left-width: 150px;
+        border-right-width: 150px;
+        border-bottom-width: 142px;
+    }
+}
+
+@media (max-width: 420px) {
+    .login-main {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .login-intro h1 {
+        font-size: 40px;
+    }
+
+    .login-card {
+        padding: 20px;
+    }
+
+    .login-card-top {
+        margin-bottom: 23px;
+    }
+
+    .login-register {
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .login-footer-note {
+        display: none;
+    }
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .login-stars span,
+    .travel-doodle,
+    .cyclist,
+    .travel-sticker {
+        animation: none;
+    }
+
+    .login-submit,
+    .login-submit::before,
+    .login-register a svg {
+        transition: none;
+    }
+}

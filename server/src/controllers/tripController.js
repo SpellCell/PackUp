@@ -1,5 +1,6 @@
 import Trip from "../models/Trip.js";
 import cloudinary from "../config/cloudinary.js";
+import { createNotification } from "../services/notificationService.js";
 
 export const createTrip = async (req, res) => {
     try {
@@ -48,7 +49,8 @@ export const createTrip = async (req, res) => {
     }
 };
 
-// create trip
+
+// Get all trips
 
 export const getAllTrips = async (req, res) => {
     try {
@@ -102,11 +104,14 @@ export const getAllTrips = async (req, res) => {
         const totalTrips = await Trip.countDocuments(query);
 
         const trips = await Trip.find(query)
+            .select("-tripCode")
             .populate(
                 "createdBy",
                 "name username profileImage"
             )
-            .sort({ createdAt: -1 })
+            .sort({
+                createdAt: -1
+            })
             .skip(skip)
             .limit(Number(limit));
 
@@ -129,14 +134,22 @@ export const getAllTrips = async (req, res) => {
 
     }
 };
-// get songle trip
+
+
+// Get single trip
 
 export const getTripById = async (req, res) => {
     try {
 
         const trip = await Trip.findById(req.params.id)
-            .populate("createdBy", "name username email profileImage")
-            .populate("participants", "name username profileImage");
+            .populate(
+                "createdBy",
+                "name username email profileImage"
+            )
+            .populate(
+                "participants",
+                "name username profileImage"
+            );
 
         if (!trip) {
             return res.status(404).json({
@@ -145,9 +158,19 @@ export const getTripById = async (req, res) => {
             });
         }
 
+        const tripData = trip.toObject();
+
+        const isOwner =
+            trip.createdBy._id.toString() ===
+            req.user._id.toString();
+
+        if (!isOwner) {
+            delete tripData.tripCode;
+        }
+
         res.status(200).json({
             success: true,
-            trip
+            trip: tripData
         });
 
     } catch (error) {
@@ -162,7 +185,9 @@ export const getTripById = async (req, res) => {
     }
 };
 
-// update trip
+
+// Update trip
+
 export const updateTrip = async (req, res) => {
     try {
 
@@ -175,7 +200,10 @@ export const updateTrip = async (req, res) => {
             });
         }
 
-        if (trip.createdBy.toString() !== req.user._id.toString()) {
+        if (
+            trip.createdBy.toString() !==
+            req.user._id.toString()
+        ) {
             return res.status(403).json({
                 success: false,
                 message: "You are not authorized to update this trip"
@@ -209,7 +237,8 @@ export const updateTrip = async (req, res) => {
     }
 };
 
-// delete trip
+
+// Delete trip
 
 export const deleteTrip = async (req, res) => {
     try {
@@ -223,7 +252,10 @@ export const deleteTrip = async (req, res) => {
             });
         }
 
-        if (trip.createdBy.toString() !== req.user._id.toString()) {
+        if (
+            trip.createdBy.toString() !==
+            req.user._id.toString()
+        ) {
             return res.status(403).json({
                 success: false,
                 message: "You are not authorized to delete this trip"
@@ -250,7 +282,8 @@ export const deleteTrip = async (req, res) => {
 };
 
 
-// leave trip
+// Leave trip
+
 export const leaveTrip = async (req, res) => {
 
     try {
@@ -264,16 +297,22 @@ export const leaveTrip = async (req, res) => {
             });
         }
 
-        if (trip.createdBy.toString() === req.user._id.toString()) {
+        if (
+            trip.createdBy.toString() ===
+            req.user._id.toString()
+        ) {
             return res.status(400).json({
                 success: false,
                 message: "Trip Owner Cannot Leave Their Own Trip"
             });
         }
 
-        const participantIndex = trip.participants.findIndex(
-            participant => participant.toString() === req.user._id.toString()
-        );
+        const participantIndex =
+            trip.participants.findIndex(
+                participant =>
+                    participant.toString() ===
+                    req.user._id.toString()
+            );
 
         if (participantIndex === -1) {
             return res.status(400).json({
@@ -282,12 +321,16 @@ export const leaveTrip = async (req, res) => {
             });
         }
 
-        trip.participants.splice(participantIndex, 1);
+        trip.participants.splice(
+            participantIndex,
+            1
+        );
+
         trip.currentMembers -= 1;
 
-if (trip.status === "Full") {
-    trip.status = "Open";
-}
+        if (trip.status === "Full") {
+            trip.status = "Open";
+        }
 
         await trip.save();
 
@@ -310,22 +353,122 @@ if (trip.status === "Full") {
 };
 
 
+// Remove participant
 
-// trip you have participated
+export const removeParticipant = async (req, res) => {
+
+    try {
+
+        const { id, userId } = req.params;
+
+        const trip = await Trip.findById(id);
+
+        if (!trip) {
+            return res.status(404).json({
+                success: false,
+                message: "Trip Not Found"
+            });
+        }
+
+        if (
+            trip.createdBy.toString() !==
+            req.user._id.toString()
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: "Only the trip organizer can remove members"
+            });
+        }
+
+        if (
+            trip.createdBy.toString() ===
+            userId.toString()
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Organizer cannot be removed from the trip"
+            });
+        }
+
+        const participantIndex =
+            trip.participants.findIndex(
+                participant =>
+                    participant.toString() ===
+                    userId.toString()
+            );
+
+        if (participantIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: "User is not a participant of this trip"
+            });
+        }
+
+        trip.participants.splice(
+            participantIndex,
+            1
+        );
+
+        trip.currentMembers -= 1;
+
+        if (trip.currentMembers < 1) {
+            trip.currentMembers = 1;
+        }
+
+        if (trip.status === "Full") {
+            trip.status = "Open";
+        }
+
+        await trip.save();
+
+        await createNotification({
+            recipient: userId,
+            sender: req.user._id,
+            trip: trip._id,
+            type: "MEMBER_REMOVED",
+            title: "Removed from Trip",
+            message: `You have been removed from "${trip.title}".`
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Member removed successfully"
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+
+    }
+
+};
+
+
+// Get trips user has participated in
+
 export const getMyTrips = async (req, res) => {
     try {
 
         const createdTrips = await Trip.find({
             createdBy: req.user._id
-        }).populate(
+        })
+        .populate(
             "participants",
             "name username email profileImage"
         );
 
         const joinedTrips = await Trip.find({
             participants: req.user._id,
-            createdBy: { $ne: req.user._id }
-        }).populate(
+            createdBy: {
+                $ne: req.user._id
+            }
+        })
+        .populate(
             "createdBy",
             "name username profileImage"
         );
@@ -349,7 +492,7 @@ export const getMyTrips = async (req, res) => {
 };
 
 
-// trip cover
+// Upload trip cover
 
 export const uploadTripCover = async (req, res) => {
 
@@ -364,7 +507,10 @@ export const uploadTripCover = async (req, res) => {
             });
         }
 
-        if (trip.createdBy.toString() !== req.user._id.toString()) {
+        if (
+            trip.createdBy.toString() !==
+            req.user._id.toString()
+        ) {
             return res.status(403).json({
                 success: false,
                 message: "Not Authorized"
@@ -379,7 +525,9 @@ export const uploadTripCover = async (req, res) => {
         }
 
         if (trip.coverImagePublicId) {
-            await cloudinary.uploader.destroy(trip.coverImagePublicId);
+            await cloudinary.uploader.destroy(
+                trip.coverImagePublicId
+            );
         }
 
         trip.coverImage = req.file.path;

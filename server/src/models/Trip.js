@@ -1,28 +1,19 @@
 import mongoose from "mongoose";
-
-// ==========================
-// Generate Trip Code
-// Example: PKU-8F4KQ2
-// ==========================
+import User from "./User.js";
 
 const generateTripCode = () => {
-
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     let code = "PKU-";
 
     for (let i = 0; i < 6; i++) {
-
         code += chars.charAt(
-
             Math.floor(Math.random() * chars.length)
-
         );
-
     }
 
     return code;
-
 };
 
 const tripSchema = new mongoose.Schema(
@@ -32,10 +23,6 @@ const tripSchema = new mongoose.Schema(
             required: [true, "Trip title is required"],
             trim: true
         },
-
-        // ==========================
-        // Unique Trip Code
-        // ==========================
 
         tripCode: {
             type: String,
@@ -96,7 +83,8 @@ const tripSchema = new mongoose.Schema(
 
         currentMembers: {
             type: Number,
-            default: 1
+            default: 1,
+            min: 1
         },
 
         tripType: {
@@ -145,42 +133,99 @@ const tripSchema = new mongoose.Schema(
     }
 );
 
-// ==========================
-// Auto Generate Unique Trip Code
-// ==========================
-
-tripSchema.pre("validate", async function () {
-
-    if (!this.isNew || this.tripCode) {
-
-        return;
-
-    }
-
-    let unique = false;
-
-    while (!unique) {
-
-        const code = generateTripCode();
-
-        const existingTrip = await mongoose.models.Trip.findOne({
-
-            tripCode: code
-
-        });
-
-        if (!existingTrip) {
-
-            this.tripCode = code;
-
-            unique = true;
-
+tripSchema.pre("validate", async function (next) {
+    try {
+        if (!this.isNew || this.tripCode) {
+            if (!this.tripCode) {
+                this.tripCode = generateTripCode();
+            }
         }
 
-    }
+        if (!this.createdBy) {
+            return next();
+        }
 
+        if (!Array.isArray(this.participants)) {
+            this.participants = [];
+        }
+
+        const organizerId =
+            this.createdBy.toString();
+
+        const uniqueParticipantIds = [
+            ...new Set(
+                this.participants.map(
+                    participant =>
+                        participant.toString()
+                )
+            )
+        ];
+
+        const cleanedParticipantIds =
+            uniqueParticipantIds.filter(
+                participantId =>
+                    participantId !== organizerId
+            );
+
+        const validUsers = await User.find({
+            _id: {
+                $in: cleanedParticipantIds
+            }
+        }).select("_id");
+
+        const validUserIds = new Set(
+            validUsers.map(
+                user => user._id.toString()
+            )
+        );
+
+        const invalidUserIds =
+            cleanedParticipantIds.filter(
+                participantId =>
+                    !validUserIds.has(
+                        participantId
+                    )
+            );
+
+        if (invalidUserIds.length > 0) {
+            return next(
+                new Error(
+                    "Trip contains one or more invalid participant users."
+                )
+            );
+        }
+
+        this.participants =
+            cleanedParticipantIds.map(
+                participantId =>
+                    new mongoose.Types.ObjectId(
+                        participantId
+                    )
+            );
+
+        this.currentMembers =
+            this.participants.length + 1;
+
+        if (
+            this.currentMembers >=
+            this.maxMembers
+        ) {
+            this.status = "Full";
+        } else if (
+            this.status === "Full"
+        ) {
+            this.status = "Open";
+        }
+
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
-const Trip = mongoose.model("Trip", tripSchema);
+const Trip = mongoose.model(
+    "Trip",
+    tripSchema
+);
 
 export default Trip;

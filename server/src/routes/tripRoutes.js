@@ -1,5 +1,7 @@
 import express from "express";
+
 import protect from "../middleware/authMiddleware.js";
+
 import {
     createTrip,
     getAllTrips,
@@ -8,9 +10,12 @@ import {
     deleteTrip,
     getMyTrips,
     leaveTrip,
+    removeParticipant,
     uploadTripCover
 } from "../controllers/tripController.js";
+
 import upload from "../middleware/uploadMiddleware.js";
+
 import validate from "../middleware/validate.js";
 
 import {
@@ -20,8 +25,18 @@ import {
 const router = express.Router();
 
 router.get("/", getAllTrips);
-router.get("/my-trips", protect, getMyTrips);
-router.get("/:id", getTripById);
+
+router.get(
+    "/my-trips",
+    protect,
+    getMyTrips
+);
+
+router.get(
+    "/:id",
+    protect,
+    getTripById
+);
 
 router.post(
     "/",
@@ -31,7 +46,6 @@ router.post(
     createTrip
 );
 
-
 router.put(
     "/:id/upload-cover",
     protect,
@@ -39,15 +53,28 @@ router.put(
     uploadTripCover
 );
 
-router.put("/:id/leave", protect, leaveTrip);
+router.put(
+    "/:id/leave",
+    protect,
+    leaveTrip
+);
 
-router.put("/:id", protect, updateTrip);
+router.delete(
+    "/:id/members/:userId",
+    protect,
+    removeParticipant
+);
 
-router.delete("/:id", protect, deleteTrip);
+router.put(
+    "/:id",
+    protect,
+    updateTrip
+);
 
-
-
-
-
+router.delete(
+    "/:id",
+    protect,
+    deleteTrip
+);
 
 export default router;

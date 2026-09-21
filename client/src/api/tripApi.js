@@ -24,12 +24,17 @@ export const getTripById = (id) =>
 export const getMyTrips = () =>
     API.get("/trips/my-trips");
 
-
 /**
  * Leave Trip
  */
 export const leaveTrip = (id) =>
     API.put(`/trips/${id}/leave`);
+
+/**
+ * Remove Participant
+ */
+export const removeParticipant = (tripId, userId) =>
+    API.delete(`/trips/${tripId}/members/${userId}`);
 
 /**
  * Update Trip

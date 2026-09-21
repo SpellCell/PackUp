@@ -1,114 +1,207 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
+import Home from "../pages/Home/Home";
+
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Dashboard from "../pages/Dashboard/Dashboard";
-
 import ProtectedRoute from "./ProtectedRoute";
+
 import VerifyEmail from "../pages/auth/VerifyEmail";
 
 import CreateTrip from "../pages/CreateTrip/CreateTrip";
 import ExploreTrips from "../pages/ExploreTrips/ExploreTrips";
 import TripDetails from "../pages/TripDetails/TripDetails";
+import MyTrips from "../pages/MyTrips/MyTrips";
+
+import Profile from "../pages/Profile/Profile";
+import Settings from "../pages/Settings/Settings";
+
 import ChatPage from "../pages/Chat/ChatPage";
+
 import JoinTrip from "../pages/JoinTrip/JoinTrip";
 import OrganizerRequests from "../pages/JoinRequests/OrganizerRequests";
 
+import Notifications from "../pages/Notifications/Notifications";
 
-const AppRoutes = () => {
+import Expenses from "../pages/Expenses/Expenses";
+import ExpenseDashboard from "../pages/Expenses/ExpenseDashboard";
 
-    return (
+const AppRoutes = () => (
+    <Routes>
 
-        <Routes>
+        {/* Public */}
 
-            <Route
+        <Route
+            path="/"
+            element={<Home />}
+        />
 
-                path="/"
+        {/* Authentication */}
 
-                element={<Navigate to="/dashboard" replace />}
+        <Route
+            path="/login"
+            element={<Login />}
+        />
 
-            />
+        <Route
+            path="/register"
+            element={<Register />}
+        />
 
-            <Route
+        <Route
+            path="/verify-email"
+            element={<VerifyEmail />}
+        />
 
-                path="/login"
+        {/* Dashboard */}
 
-                element={<Login />}
+        <Route
+            path="/dashboard"
+            element={
+                <ProtectedRoute>
+                    <Dashboard />
+                </ProtectedRoute>
+            }
+        />
 
-            />
+        {/* Trips */}
 
-            <Route
+        <Route
+            path="/create-trip"
+            element={
+                <ProtectedRoute>
+                    <CreateTrip />
+                </ProtectedRoute>
+            }
+        />
 
-                path="/register"
+        <Route
+            path="/explore"
+            element={
+                <ProtectedRoute>
+                    <ExploreTrips />
+                </ProtectedRoute>
+            }
+        />
 
-                element={<Register />}
+        <Route
+            path="/my-trips"
+            element={
+                <ProtectedRoute>
+                    <MyTrips />
+                </ProtectedRoute>
+            }
+        />
 
-            />
+        <Route
+            path="/trips/:id"
+            element={
+                <ProtectedRoute>
+                    <TripDetails />
+                </ProtectedRoute>
+            }
+        />
 
-            <Route
+        {/* Profile */}
 
-                path="/dashboard"
+        <Route
+            path="/profile"
+            element={
+                <ProtectedRoute>
+                    <Profile />
+                </ProtectedRoute>
+            }
+        />
 
-                element={
+        {/* Settings */}
 
-                    <ProtectedRoute>
+        <Route
+            path="/settings"
+            element={
+                <ProtectedRoute>
+                    <Settings />
+                </ProtectedRoute>
+            }
+        />
 
-                        <Dashboard />
+        {/* Chat */}
 
-                    </ProtectedRoute>
+        <Route
+            path="/chat"
+            element={
+                <ProtectedRoute>
+                    <ChatPage />
+                </ProtectedRoute>
+            }
+        />
 
-                }
+        {/* Join Trip */}
 
-            />
-            <Route path="/verify-email" element={<VerifyEmail />} />
-             
-             <Route
-    path="/create-trip"
-    element={
-        <ProtectedRoute>
-            <CreateTrip />
-        </ProtectedRoute>
-    }
-/>
-<Route
+        <Route
+            path="/join-trip"
+            element={
+                <ProtectedRoute>
+                    <JoinTrip />
+                </ProtectedRoute>
+            }
+        />
 
-    path="/explore"
+        {/* Join Requests */}
 
-    element={<ExploreTrips />}
+        <Route
+            path="/join-requests"
+            element={
+                <ProtectedRoute>
+                    <OrganizerRequests />
+                </ProtectedRoute>
+            }
+        />
 
-/>
-<Route
+        {/* Notifications */}
 
-    path="/trips/:id"
+        <Route
+            path="/notifications"
+            element={
+                <ProtectedRoute>
+                    <Notifications />
+                </ProtectedRoute>
+            }
+        />
 
-    element={<TripDetails />}
+        {/* Expenses */}
 
-/>
-<Route
+        <Route
+            path="/expenses"
+            element={
+                <ProtectedRoute>
+                    <Expenses />
+                </ProtectedRoute>
+            }
+        />
 
-    path="/chat"
+        <Route
+            path="/expenses/:tripId"
+            element={
+                <ProtectedRoute>
+                    <ExpenseDashboard />
+                </ProtectedRoute>
+            }
+        />
 
-    element={<ChatPage />}
+        {/* Unknown */}
 
-/>
-<Route
+        <Route
+            path="*"
+            element={
+                <Navigate
+                    to="/"
+                    replace
+                />
+            }
+        />
 
-    path="/join-trip"
-
-    element={<JoinTrip />}
-
-/>
-<Route
-
-    path="/join-requests"
-
-    element={<OrganizerRequests />}
-
-/>
-        </Routes>
-
-    );
-
-};
+    </Routes>
+);
 
 export default AppRoutes;

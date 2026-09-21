@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import GlassCard from "../../components/ui/GlassCard";
@@ -8,9 +9,26 @@ import { sendJoinRequest } from "../../api/joinRequestApi";
 
 const JoinTripForm = () => {
 
+    const [searchParams] = useSearchParams();
+
     const [tripCode, setTripCode] = useState("");
 
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+
+        const code =
+            searchParams.get("code");
+
+        if (code) {
+
+            setTripCode(
+                code.toUpperCase()
+            );
+
+        }
+
+    }, [searchParams]);
 
     const handleSubmit = async (e) => {
 
@@ -18,7 +36,9 @@ const JoinTripForm = () => {
 
         if (!tripCode.trim()) {
 
-            toast.error("Please enter a Trip Code.");
+            toast.error(
+                "Please enter a Trip Code."
+            );
 
             return;
 
@@ -28,13 +48,14 @@ const JoinTripForm = () => {
 
             setLoading(true);
 
-            const { data } = await sendJoinRequest(
+            const { data } =
+                await sendJoinRequest(
+                    tripCode.trim()
+                );
 
-                tripCode.trim()
-
+            toast.success(
+                data.message
             );
-
-            toast.success(data.message);
 
             setTripCode("");
 
@@ -43,11 +64,8 @@ const JoinTripForm = () => {
         catch (error) {
 
             toast.error(
-
                 error.response?.data?.message ||
-
                 "Failed to send request."
-
             );
 
         }
@@ -65,39 +83,25 @@ const JoinTripForm = () => {
         <GlassCard className="p-8">
 
             <form
-
                 onSubmit={handleSubmit}
-
                 className="space-y-6"
-
             >
 
                 <div>
 
                     <label className="block mb-2 text-sm">
-
                         Trip Code
-
                     </label>
 
                     <input
-
                         type="text"
-
                         value={tripCode}
-
                         onChange={(e) =>
-
                             setTripCode(
-
                                 e.target.value.toUpperCase()
-
                             )
-
                         }
-
                         placeholder="PKU-ABC123"
-
                         className="
                             w-full
                             rounded-2xl
@@ -111,23 +115,16 @@ const JoinTripForm = () => {
                             uppercase
                             tracking-widest
                         "
-
                     />
 
                 </div>
 
                 <Button
-
                     loading={loading}
-
                     type="submit"
-
                     className="w-full"
-
                 >
-
                     Send Join Request
-
                 </Button>
 
             </form>

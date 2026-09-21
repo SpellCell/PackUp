@@ -24,6 +24,7 @@ const notificationSchema = new mongoose.Schema(
                 "JOIN_REQUEST",
                 "REQUEST_ACCEPTED",
                 "REQUEST_REJECTED",
+                "MEMBER_REMOVED",
                 "NEW_MESSAGE",
                 "TRIP_UPDATED",
                 "TRIP_CANCELLED"
@@ -45,7 +46,6 @@ const notificationSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         }
-
     },
     {
         timestamps: true
