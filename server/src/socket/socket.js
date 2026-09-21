@@ -10,10 +10,15 @@ let io;
 const onlineUsers = new Map();
 
 export const initializeSocket = (server) => {
+    const CLIENT_URL =
+        process.env.CLIENT_URL ||
+        "http://localhost:5173";
+
     io = new Server(server, {
         cors: {
-            origin: "http://localhost:5173",
-            methods: ["GET", "POST"]
+            origin: CLIENT_URL,
+            methods: ["GET", "POST"],
+            credentials: true
         }
     });
 
@@ -23,11 +28,14 @@ export const initializeSocket = (server) => {
 
     io.use(async (socket, next) => {
         try {
-            const token = socket.handshake.auth.token;
+            const token =
+                socket.handshake.auth.token;
 
             if (!token) {
                 return next(
-                    new Error("Authentication Error")
+                    new Error(
+                        "Authentication Error"
+                    )
                 );
             }
 
@@ -42,7 +50,9 @@ export const initializeSocket = (server) => {
 
             if (!user) {
                 return next(
-                    new Error("User Not Found")
+                    new Error(
+                        "User Not Found"
+                    )
                 );
             }
 
@@ -57,7 +67,9 @@ export const initializeSocket = (server) => {
             );
 
             next(
-                new Error("Authentication Error")
+                new Error(
+                    "Authentication Error"
+                )
             );
         }
     });
@@ -106,7 +118,9 @@ export const initializeSocket = (server) => {
             async (tripId) => {
                 try {
                     const trip =
-                        await Trip.findById(tripId);
+                        await Trip.findById(
+                            tripId
+                        );
 
                     if (!trip) {
                         socket.emit(
@@ -198,7 +212,9 @@ export const initializeSocket = (server) => {
                     }
 
                     const trip =
-                        await Trip.findById(tripId);
+                        await Trip.findById(
+                            tripId
+                        );
 
                     if (!trip) {
                         socket.emit(
@@ -241,8 +257,10 @@ export const initializeSocket = (server) => {
                     const chat =
                         await Chat.create({
                             trip: tripId,
-                            sender: socket.user._id,
-                            message: message.trim()
+                            sender:
+                                socket.user._id,
+                            message:
+                                message.trim()
                         });
 
                     const populatedMessage =
