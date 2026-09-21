@@ -133,16 +133,14 @@ const tripSchema = new mongoose.Schema(
     }
 );
 
-tripSchema.pre("validate", async function (next) {
+tripSchema.pre("validate", async function () {
     try {
-        if (!this.isNew || this.tripCode) {
-            if (!this.tripCode) {
-                this.tripCode = generateTripCode();
-            }
+        if (!this.tripCode) {
+            this.tripCode = generateTripCode();
         }
 
         if (!this.createdBy) {
-            return next();
+            return;
         }
 
         if (!Array.isArray(this.participants)) {
@@ -188,10 +186,8 @@ tripSchema.pre("validate", async function (next) {
             );
 
         if (invalidUserIds.length > 0) {
-            return next(
-                new Error(
-                    "Trip contains one or more invalid participant users."
-                )
+            throw new Error(
+                "Trip contains one or more invalid participant users."
             );
         }
 
@@ -216,10 +212,8 @@ tripSchema.pre("validate", async function (next) {
         ) {
             this.status = "Open";
         }
-
-        next();
     } catch (error) {
-        next(error);
+        throw error;
     }
 });
 
