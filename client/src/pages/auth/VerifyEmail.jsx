@@ -1,11 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import {
+    ArrowRight,
+    Car,
+    Compass,
+    Map,
+    Mountain,
+    Navigation,
+    Plane,
+    ShieldCheck,
+    Sparkles
+} from "lucide-react";
 
-import GlassCard from "../../components/ui/GlassCard";
-import Button from "../../components/ui/Button";
 import { verifyEmail, resendOTP } from "../../api/authApi";
+import "./VerifyEmail.css";
 
 const VerifyEmail = () => {
 
@@ -14,7 +24,15 @@ const VerifyEmail = () => {
 
     const email = location.state?.email || "";
 
-    const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+    const [otp, setOtp] = useState([
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+    ]);
+
     const [loading, setLoading] = useState(false);
     const [timer, setTimer] = useState(60);
 
@@ -23,20 +41,20 @@ const VerifyEmail = () => {
     useEffect(() => {
 
         if (!email) {
-
             navigate("/register");
-
         }
 
     }, [email, navigate]);
 
     useEffect(() => {
 
-        if (timer <= 0) return;
+        if (timer <= 0) {
+            return;
+        }
 
         const interval = setInterval(() => {
 
-            setTimer(prev => prev - 1);
+            setTimer(previous => previous - 1);
 
         }, 1000);
 
@@ -48,8 +66,9 @@ const VerifyEmail = () => {
 
         if (code.length !== 6) {
 
-            return toast.error("Enter complete OTP");
+            toast.error("Enter complete OTP");
 
+            return;
         }
 
         try {
@@ -57,25 +76,21 @@ const VerifyEmail = () => {
             setLoading(true);
 
             await verifyEmail({
-
                 email,
-
                 otp: code
-
             });
 
-            toast.success("Email Verified Successfully 🎉");
+            toast.success(
+                "Email Verified Successfully 🎉"
+            );
 
             navigate("/login");
 
         } catch (error) {
 
             toast.error(
-
                 error.response?.data?.message ||
-
                 "Verification Failed"
-
             );
 
         } finally {
@@ -88,7 +103,9 @@ const VerifyEmail = () => {
 
     const handleChange = (value, index) => {
 
-        if (!/^\d?$/.test(value)) return;
+        if (!/^\d?$/.test(value)) {
+            return;
+        }
 
         const newOtp = [...otp];
 
@@ -96,54 +113,60 @@ const VerifyEmail = () => {
 
         setOtp(newOtp);
 
-        if (value && index < 5) {
+        if (
+            value &&
+            index < 5
+        ) {
 
-            inputRefs.current[index + 1]?.focus();
+            inputRefs.current[
+                index + 1
+            ]?.focus();
 
         }
 
         const code = newOtp.join("");
 
-        if (code.length === 6 && !code.includes("")) {
+        if (
+            code.length === 6 &&
+            !code.includes("")
+        ) {
 
             setTimeout(() => {
-
                 submit(code);
-
             }, 150);
 
         }
 
     };
 
-    const handleKeyDown = (e, index) => {
+    const handleKeyDown = (event, index) => {
 
         if (
-
-            e.key === "Backspace" &&
-
+            event.key === "Backspace" &&
             !otp[index] &&
-
             index > 0
-
         ) {
 
-            inputRefs.current[index - 1]?.focus();
+            inputRefs.current[
+                index - 1
+            ]?.focus();
 
         }
 
     };
 
-    const handlePaste = (e) => {
+    const handlePaste = (event) => {
 
-        e.preventDefault();
+        event.preventDefault();
 
-        const pasted = e.clipboardData
+        const pasted = event.clipboardData
             .getData("text")
             .replace(/\D/g, "")
             .slice(0, 6);
 
-        if (pasted.length !== 6) return;
+        if (pasted.length !== 6) {
+            return;
+        }
 
         const digits = pasted.split("");
 
@@ -152,9 +175,7 @@ const VerifyEmail = () => {
         inputRefs.current[5]?.focus();
 
         setTimeout(() => {
-
             submit(pasted);
-
         }, 150);
 
     };
@@ -165,22 +186,30 @@ const VerifyEmail = () => {
 
             await resendOTP(email);
 
-            toast.success("New OTP sent successfully.");
+            toast.success(
+                "New OTP sent successfully."
+            );
 
-            setOtp(["", "", "", "", "", ""]);
+            setOtp([
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]);
 
             setTimer(60);
 
-            inputRefs.current[0]?.focus();
+            setTimeout(() => {
+                inputRefs.current[0]?.focus();
+            }, 50);
 
         } catch (error) {
 
             toast.error(
-
                 error.response?.data?.message ||
-
                 "Failed to resend OTP"
-
             );
 
         }
@@ -189,132 +218,439 @@ const VerifyEmail = () => {
 
     return (
 
-        <div className="min-h-screen bg-[#09090B] flex justify-center items-center p-6">
+        <div className="verify-page">
 
-            <motion.div
+            <div className="verify-background">
 
-                initial={{ opacity: 0, scale: 0.9 }}
+                <div className="verify-glow verify-glow-one" />
 
-                animate={{ opacity: 1, scale: 1 }}
+                <div className="verify-glow verify-glow-two" />
 
+                <div className="verify-glow verify-glow-three" />
+
+                <div className="verify-grid" />
+
+                <div className="verify-stars">
+
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+
+                </div>
+
+                <div className="verify-mountains">
+
+                    <div className="verify-mountain verify-mountain-one" />
+
+                    <div className="verify-mountain verify-mountain-two" />
+
+                    <div className="verify-mountain verify-mountain-three" />
+
+                </div>
+
+            </div>
+
+            <div className="verify-doodles">
+
+                <div className="verify-doodle verify-doodle-compass">
+
+                    <Compass
+                        size={42}
+                        strokeWidth={1.3}
+                    />
+
+                </div>
+
+                <div className="verify-doodle verify-doodle-plane">
+
+                    <Plane
+                        size={34}
+                        strokeWidth={1.4}
+                    />
+
+                </div>
+
+                <div className="verify-doodle verify-doodle-mountain">
+
+                    <Mountain
+                        size={48}
+                        strokeWidth={1.2}
+                    />
+
+                </div>
+
+                <div className="verify-doodle verify-doodle-map">
+
+                    <Map
+                        size={40}
+                        strokeWidth={1.3}
+                    />
+
+                </div>
+
+                <div className="verify-doodle verify-doodle-navigation">
+
+                    <Navigation
+                        size={32}
+                        strokeWidth={1.3}
+                    />
+
+                </div>
+
+                <div className="verify-doodle verify-doodle-sparkle">
+
+                    <Sparkles
+                        size={27}
+                        strokeWidth={1.3}
+                    />
+
+                </div>
+
+                <div className="verify-car-route">
+
+                    <div className="verify-route-line" />
+
+                    <motion.div
+                        className="verify-car"
+                        initial={{
+                            left: "-70px"
+                        }}
+                        animate={{
+                            left: [
+                                "-70px",
+                                "18%",
+                                "38%",
+                                "60%",
+                                "82%",
+                                "calc(100% + 70px)"
+                            ],
+                            y: [
+                                0,
+                                -5,
+                                1,
+                                -4,
+                                1,
+                                -2
+                            ],
+                            rotate: [
+                                -2,
+                                1,
+                                -1,
+                                1,
+                                -1,
+                                0
+                            ]
+                        }}
+                        transition={{
+                            duration: 14,
+                            repeat: Infinity,
+                            ease: "linear",
+                            times: [
+                                0,
+                                0.2,
+                                0.4,
+                                0.6,
+                                0.8,
+                                1
+                            ]
+                        }}
+                    >
+
+                        <Car
+                            size={48}
+                            strokeWidth={1.35}
+                        />
+
+                    </motion.div>
+
+                </div>
+
+                <div className="verify-sticker">
+
+                    <span>
+                        GO
+                    </span>
+
+                    <small>
+                        ADVENTURE
+                    </small>
+
+                </div>
+
+            </div>
+
+            <Link
+                to="/"
+                className="verify-brand"
             >
 
-                <GlassCard className="max-w-lg w-full">
+                <span className="verify-brand-mark">
+                    P
+                </span>
 
-                    <h1 className="text-4xl font-bold text-white">
+                <span className="verify-brand-name">
+                    PackUP
+                </span>
 
-                        Verify Email
+            </Link>
 
-                    </h1>
+            <main className="verify-main">
 
-                    <p className="text-zinc-400 mt-3">
+                <motion.div
+                    className="verify-content"
+                    initial={{
+                        opacity: 0,
+                        y: 25
+                    }}
+                    animate={{
+                        opacity: 1,
+                        y: 0
+                    }}
+                    transition={{
+                        duration: 0.65,
+                        ease: "easeOut"
+                    }}
+                >
 
-                        Enter the 6-digit code sent to
+                    <div className="verify-intro">
 
-                    </p>
+                        <span className="verify-eyebrow">
 
-                    <p className="text-indigo-400 mt-1 break-all">
+                            <span className="verify-eyebrow-dot" />
 
-                        {email}
+                            ONE LAST STEP
 
-                    </p>
+                        </span>
 
-                    <div className="flex justify-center gap-3 mt-8">
+                        <h1>
+                            Verify
+                            <span>
+                                your journey.
+                            </span>
+                        </h1>
 
-                        {
-
-                            otp.map((digit, index) => (
-
-                                <input
-
-                                    key={index}
-
-                                    ref={el => inputRefs.current[index] = el}
-
-                                    maxLength={1}
-
-                                    value={digit}
-
-                                    onChange={(e) =>
-                                        handleChange(
-                                            e.target.value,
-                                            index
-                                        )
-                                    }
-
-                                    onKeyDown={(e) =>
-                                        handleKeyDown(
-                                            e,
-                                            index
-                                        )
-                                    }
-
-                                    onPaste={handlePaste}
-
-                                    className="w-14 h-16 rounded-xl text-center text-2xl font-semibold bg-zinc-900 border border-zinc-700 text-white outline-none focus:border-indigo-500 transition"
-
-                                />
-
-                            ))
-
-                        }
+                        <p>
+                            Confirm your email and get
+                            ready for your next adventure.
+                        </p>
 
                     </div>
 
-                    <Button
+                    <div className="verify-card">
 
-                        className="w-full mt-8"
+                        <div className="verify-card-glow" />
 
-                        loading={loading}
+                        <div className="verify-card-top">
 
-                        onClick={() => submit()}
+                            <div>
 
-                    >
+                                <span className="verify-card-label">
+                                    EMAIL VERIFICATION
+                                </span>
 
-                        Verify Email
+                                <h2>
+                                    Let's make it official.
+                                </h2>
 
-                    </Button>
+                            </div>
 
-                    <div className="text-center mt-6">
+                            <div className="verify-card-icon">
 
-                        {
+                                <ShieldCheck
+                                    size={21}
+                                />
 
-                            timer > 0
+                            </div>
 
-                                ?
+                        </div>
 
-                                <p className="text-zinc-500">
+                        <div className="verify-message">
 
-                                    Resend OTP in <span className="text-indigo-400">{timer}s</span>
+                            <p>
+                                Enter the 6-digit code
+                                we've sent to
+                            </p>
+
+                            <span>
+                                {email}
+                            </span>
+
+                        </div>
+
+                        <div
+                            className="verify-otp"
+                            onPaste={handlePaste}
+                        >
+
+                            {otp.map(
+                                (digit, index) => (
+
+                                    <motion.input
+                                        key={index}
+                                        ref={element => {
+                                            inputRefs.current[
+                                                index
+                                            ] = element;
+                                        }}
+                                        type="text"
+                                        inputMode="numeric"
+                                        autoComplete={
+                                            index === 0
+                                                ? "one-time-code"
+                                                : "off"
+                                        }
+                                        maxLength={1}
+                                        value={digit}
+                                        aria-label={
+                                            `OTP digit ${index + 1}`
+                                        }
+                                        onChange={event =>
+                                            handleChange(
+                                                event.target.value,
+                                                index
+                                            )
+                                        }
+                                        onKeyDown={event =>
+                                            handleKeyDown(
+                                                event,
+                                                index
+                                            )
+                                        }
+                                        whileFocus={{
+                                            y: -3
+                                        }}
+                                        className={
+                                            digit
+                                                ? "verify-otp-input filled"
+                                                : "verify-otp-input"
+                                        }
+                                    />
+
+                                )
+                            )}
+
+                        </div>
+
+                        <button
+                            type="button"
+                            className={
+                                loading
+                                    ? "verify-submit loading"
+                                    : "verify-submit"
+                            }
+                            disabled={loading}
+                            onClick={() => submit()}
+                        >
+
+                            {loading ? (
+
+                                <>
+                                    <span className="verify-spinner" />
+
+                                    Verifying your email...
+                                </>
+
+                            ) : (
+
+                                <>
+
+                                    <span>
+                                        Verify Email
+                                    </span>
+
+                                    <ArrowRight
+                                        size={18}
+                                    />
+
+                                </>
+
+                            )}
+
+                        </button>
+
+                        <div className="verify-resend">
+
+                            {timer > 0 ? (
+
+                                <p>
+
+                                    Didn't receive the code?
+
+                                    <span>
+                                        Resend in {timer}s
+                                    </span>
 
                                 </p>
 
-                                :
+                            ) : (
 
                                 <button
-
+                                    type="button"
                                     onClick={handleResend}
-
-                                    className="text-indigo-400 hover:text-indigo-300 transition"
-
                                 >
 
-                                    Resend OTP
+                                    Didn't receive the code?
+
+                                    <span>
+                                        Resend OTP
+                                    </span>
+
+                                    <ArrowRight
+                                        size={14}
+                                    />
 
                                 </button>
 
-                        }
+                            )}
+
+                        </div>
+
+                        <div className="verify-divider">
+
+                            <span />
+
+                            <ShieldCheck
+                                size={14}
+                            />
+
+                            <span />
+
+                        </div>
+
+                        <p className="verify-security">
+
+                            Your verification code is
+                            secure and can only be used
+                            for this account.
+
+                        </p>
 
                     </div>
 
-                </GlassCard>
+                    <div className="verify-footer">
 
-            </motion.div>
+                        <span>
+
+                            <Sparkles
+                                size={13}
+                            />
+
+                            Almost there. Your adventure
+                            is waiting.
+
+                        </span>
+
+                    </div>
+
+                </motion.div>
+
+            </main>
 
         </div>
-
     );
-
 };
 
 export default VerifyEmail;

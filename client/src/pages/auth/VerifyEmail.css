@@ -1,0 +1,1101 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Mr+Dafoe&display=swap");
+
+.verify-page {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #050507;
+    color: white;
+    font-family: "DM Sans", sans-serif;
+}
+
+/* ========================================
+   BACKGROUND
+======================================== */
+
+.verify-background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.verify-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+}
+
+.verify-glow-one {
+    width: 500px;
+    height: 500px;
+    top: -180px;
+    left: -140px;
+    background: rgba(99, 91, 255, 0.14);
+}
+
+.verify-glow-two {
+    width: 430px;
+    height: 430px;
+    right: -100px;
+    bottom: -120px;
+    background: rgba(34, 211, 238, 0.09);
+}
+
+.verify-glow-three {
+    width: 280px;
+    height: 280px;
+    left: 48%;
+    top: 35%;
+    background: rgba(168, 156, 255, 0.045);
+}
+
+.verify-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.22;
+    background-image:
+        linear-gradient(
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        );
+    background-size: 70px 70px;
+    mask-image: radial-gradient(
+        ellipse at center,
+        black 0%,
+        transparent 75%
+    );
+    -webkit-mask-image: radial-gradient(
+        ellipse at center,
+        black 0%,
+        transparent 75%
+    );
+}
+
+.verify-stars {
+    position: absolute;
+    inset: 0;
+}
+
+.verify-stars span {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow:
+        0 0 12px rgba(255, 255, 255, 0.4);
+    animation: verifyStarPulse 3s ease-in-out infinite;
+}
+
+.verify-stars span:nth-child(1) {
+    top: 18%;
+    left: 17%;
+}
+
+.verify-stars span:nth-child(2) {
+    top: 28%;
+    right: 18%;
+    animation-delay: 0.8s;
+}
+
+.verify-stars span:nth-child(3) {
+    top: 65%;
+    left: 12%;
+    animation-delay: 1.5s;
+}
+
+.verify-stars span:nth-child(4) {
+    top: 76%;
+    right: 13%;
+    animation-delay: 2.1s;
+}
+
+.verify-stars span:nth-child(5) {
+    top: 12%;
+    right: 42%;
+    animation-delay: 1.1s;
+}
+
+.verify-stars span:nth-child(6) {
+    bottom: 20%;
+    left: 38%;
+    animation-delay: 2.5s;
+}
+
+@keyframes verifyStarPulse {
+    0%,
+    100% {
+        opacity: 0.25;
+        transform: scale(0.7);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.4);
+    }
+}
+
+/* ========================================
+   MOUNTAINS
+======================================== */
+
+.verify-mountains {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -10px;
+    height: 250px;
+    opacity: 0.2;
+}
+
+.verify-mountain {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 230px solid transparent;
+    border-right: 230px solid transparent;
+    border-bottom: 270px solid #101016;
+}
+
+.verify-mountain::after {
+    content: "";
+    position: absolute;
+    left: -230px;
+    top: 55px;
+    width: 0;
+    height: 0;
+    border-left: 230px solid transparent;
+    border-right: 230px solid transparent;
+    border-bottom: 215px solid rgba(255, 255, 255, 0.025);
+}
+
+.verify-mountain-one {
+    left: -100px;
+    transform: scale(1.2);
+}
+
+.verify-mountain-two {
+    left: 34%;
+    bottom: -35px;
+    transform: scale(0.9);
+}
+
+.verify-mountain-three {
+    right: -130px;
+    bottom: -20px;
+    transform: scale(1.1);
+}
+
+/* ========================================
+   TRAVEL DOODLES
+======================================== */
+
+.verify-doodles {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.verify-doodle {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(190, 184, 255, 0.5);
+    filter: drop-shadow(
+        0 0 18px rgba(99, 91, 255, 0.15)
+    );
+}
+
+.verify-doodle-compass {
+    top: 17%;
+    left: 8%;
+    width: 75px;
+    height: 75px;
+    border: 1px solid rgba(190, 184, 255, 0.18);
+    border-radius: 50%;
+    animation: verifyCompassFloat 6s ease-in-out infinite;
+}
+
+.verify-doodle-plane {
+    top: 19%;
+    right: 10%;
+    transform: rotate(-18deg);
+    animation: verifyPlaneFloat 7s ease-in-out infinite;
+}
+
+.verify-doodle-mountain {
+    bottom: 22%;
+    left: 8%;
+    animation: verifyDoodleFloat 5s ease-in-out infinite;
+}
+
+.verify-doodle-map {
+    bottom: 19%;
+    right: 9%;
+    transform: rotate(7deg);
+    animation: verifyDoodleFloat 6s ease-in-out infinite 1s;
+}
+
+.verify-doodle-navigation {
+    top: 44%;
+    left: 5%;
+    animation: verifyDoodleFloat 5.5s ease-in-out infinite 1.5s;
+}
+
+.verify-doodle-sparkle {
+    top: 33%;
+    right: 8%;
+    color: rgba(255, 255, 255, 0.5);
+    animation: verifySparkleFloat 4s ease-in-out infinite;
+}
+
+@keyframes verifyCompassFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(12deg);
+    }
+}
+
+@keyframes verifyPlaneFloat {
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(-18deg);
+    }
+
+    50% {
+        transform: translate(-18px, -14px) rotate(-12deg);
+    }
+}
+
+@keyframes verifyDoodleFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(3deg);
+    }
+}
+
+@keyframes verifySparkleFloat {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(0.85) rotate(0deg);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.15) rotate(15deg);
+    }
+}
+
+/* ========================================
+   CAR ROUTE
+======================================== */
+
+.verify-car-route {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18%;
+    height: 80px;
+    overflow: hidden;
+}
+
+.verify-route-line {
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    bottom: 15px;
+    height: 1px;
+    border-bottom: 1px dashed rgba(168, 156, 255, 0.2);
+}
+
+.verify-car {
+    position: absolute;
+    bottom: 10px;
+    color: rgba(190, 184, 255, 0.65);
+    filter: drop-shadow(
+        0 0 12px rgba(99, 91, 255, 0.25)
+    );
+}
+
+/* ========================================
+   STICKER
+======================================== */
+
+.verify-sticker {
+    position: absolute;
+    top: 67%;
+    right: 18%;
+    width: 92px;
+    height: 92px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    background: rgba(99, 91, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+    transform: rotate(-12deg);
+    animation: verifyStickerFloat 5s ease-in-out infinite;
+}
+
+.verify-sticker span {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.verify-sticker small {
+    margin-top: 2px;
+    font-size: 7px;
+    letter-spacing: 2px;
+}
+
+@keyframes verifyStickerFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(-12deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(-5deg);
+    }
+}
+
+/* ========================================
+   BRAND
+======================================== */
+
+.verify-brand {
+    position: absolute;
+    z-index: 20;
+    top: 32px;
+    left: 42px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: white;
+    text-decoration: none;
+}
+
+.verify-brand-mark {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #635bff;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    box-shadow:
+        0 10px 30px rgba(99, 91, 255, 0.3);
+}
+
+.verify-brand-name {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* ========================================
+   MAIN
+======================================== */
+
+.verify-main {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 110px 25px 70px;
+}
+
+.verify-content {
+    width: min(460px, 100%);
+}
+
+/* ========================================
+   INTRO
+======================================== */
+
+.verify-intro {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.verify-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 17px;
+    color: rgba(190, 184, 255, 0.75);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.verify-eyebrow-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #8f87ff;
+    box-shadow:
+        0 0 12px rgba(143, 135, 255, 0.8);
+}
+
+.verify-intro h1 {
+    margin: 0;
+    color: white;
+    font-size: clamp(42px, 5vw, 56px);
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: -3px;
+}
+
+.verify-intro h1 span {
+    display: block;
+    margin-top: 5px;
+    color: #c4bdff;
+    font-family: "Mr Dafoe", cursive;
+    font-size: 1.15em;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+.verify-intro p {
+    max-width: 350px;
+    margin: 18px auto 0;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* ========================================
+   CARD
+======================================== */
+
+.verify-card {
+    position: relative;
+    overflow: hidden;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 28px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.075),
+            rgba(255, 255, 255, 0.025)
+        );
+    box-shadow:
+        0 35px 100px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+}
+
+.verify-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(168, 156, 255, 0.7),
+        transparent
+    );
+}
+
+.verify-card-glow {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    top: -130px;
+    right: -70px;
+    border-radius: 50%;
+    background: rgba(99, 91, 255, 0.12);
+    filter: blur(60px);
+    pointer-events: none;
+}
+
+/* ========================================
+   CARD HEADER
+======================================== */
+
+.verify-card-top {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.verify-card-label {
+    display: block;
+    margin-bottom: 9px;
+    color: #8f87ff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.verify-card-top h2 {
+    margin: 0;
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.8px;
+}
+
+.verify-card-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(168, 156, 255, 0.2);
+    border-radius: 14px;
+    background: rgba(99, 91, 255, 0.1);
+    color: #aaa4ff;
+}
+
+/* ========================================
+   MESSAGE
+======================================== */
+
+.verify-message {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 24px;
+}
+
+.verify-message p {
+    margin: 0 0 5px;
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 12px;
+}
+
+.verify-message span {
+    display: block;
+    overflow: hidden;
+    color: #aaa4ff;
+    font-size: 13px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ========================================
+   OTP
+======================================== */
+
+.verify-otp {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 9px;
+    margin-bottom: 22px;
+}
+
+.verify-otp-input {
+    width: 100%;
+    height: 60px;
+    min-width: 0;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 15px;
+    outline: none;
+    background: rgba(5, 5, 8, 0.55);
+    color: white;
+    font-family: "DM Sans", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    caret-color: #aaa4ff;
+    transition:
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.verify-otp-input:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.verify-otp-input:focus {
+    border-color: rgba(126, 116, 255, 0.75);
+    background: rgba(7, 7, 12, 0.75);
+    box-shadow:
+        0 0 0 4px rgba(99, 91, 255, 0.09),
+        0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.verify-otp-input.filled {
+    border-color: rgba(126, 116, 255, 0.42);
+    background: rgba(99, 91, 255, 0.07);
+    color: #c4bdff;
+}
+
+/* ========================================
+   SUBMIT
+======================================== */
+
+.verify-submit {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    width: 100%;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 15px;
+    background: linear-gradient(
+        135deg,
+        #635bff,
+        #766dff
+    );
+    color: white;
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow:
+        0 16px 35px rgba(99, 91, 255, 0.22);
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+.verify-submit::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -110%;
+    width: 75%;
+    height: 100%;
+    transform: skewX(-20deg);
+    background: rgba(255, 255, 255, 0.18);
+    transition: left 0.6s ease;
+}
+
+.verify-submit:hover::before {
+    left: 135%;
+}
+
+.verify-submit:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 20px 45px rgba(99, 91, 255, 0.3);
+    filter: brightness(1.05);
+}
+
+.verify-submit:active {
+    transform: translateY(0);
+}
+
+.verify-submit span,
+.verify-submit svg {
+    position: relative;
+    z-index: 1;
+}
+
+.verify-submit svg {
+    transition: transform 0.25s ease;
+}
+
+.verify-submit:hover svg {
+    transform: translateX(4px);
+}
+
+.verify-submit.loading {
+    cursor: wait;
+    opacity: 0.85;
+}
+
+.verify-spinner {
+    width: 17px;
+    height: 17px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: verifySpin 0.7s linear infinite;
+}
+
+@keyframes verifySpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========================================
+   RESEND
+======================================== */
+
+.verify-resend {
+    position: relative;
+    z-index: 1;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.verify-resend p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.32);
+    font-size: 11px;
+}
+
+.verify-resend p span {
+    margin-left: 5px;
+    color: #aaa4ff;
+    font-weight: 600;
+}
+
+.verify-resend button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.35);
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.verify-resend button span {
+    margin-left: 3px;
+    color: #aaa4ff;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.verify-resend button:hover span {
+    color: white;
+}
+
+.verify-resend button svg {
+    color: #aaa4ff;
+    transition: transform 0.2s ease;
+}
+
+.verify-resend button:hover svg {
+    transform: translateX(3px);
+}
+
+/* ========================================
+   SECURITY
+======================================== */
+
+.verify-divider {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 23px;
+}
+
+.verify-divider span {
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.verify-divider svg {
+    color: rgba(168, 156, 255, 0.5);
+}
+
+.verify-security {
+    position: relative;
+    z-index: 1;
+    max-width: 300px;
+    margin: 13px auto 0;
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 9px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* ========================================
+   FOOTER
+======================================== */
+
+.verify-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.verify-footer span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.22);
+    font-size: 10px;
+}
+
+.verify-footer svg {
+    color: rgba(168, 156, 255, 0.5);
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 900px) {
+
+    .verify-doodle-navigation {
+        left: 3%;
+    }
+
+    .verify-doodle-compass {
+        left: 5%;
+    }
+
+    .verify-doodle-plane {
+        right: 5%;
+    }
+
+    .verify-doodle-map {
+        right: 5%;
+    }
+
+    .verify-sticker {
+        right: 8%;
+    }
+
+    .verify-main {
+        padding-top: 105px;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .verify-page {
+        min-height: 100svh;
+    }
+
+    .verify-brand {
+        top: 20px;
+        left: 20px;
+    }
+
+    .verify-brand-mark {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        font-size: 18px;
+    }
+
+    .verify-brand-name {
+        font-size: 17px;
+    }
+
+    .verify-main {
+        min-height: 100svh;
+        padding: 90px 18px 35px;
+    }
+
+    .verify-intro {
+        margin-bottom: 20px;
+    }
+
+    .verify-intro h1 {
+        font-size: 42px;
+        letter-spacing: -2px;
+    }
+
+    .verify-intro p {
+        font-size: 13px;
+        max-width: 310px;
+    }
+
+    .verify-card {
+        padding: 23px;
+        border-radius: 23px;
+    }
+
+    .verify-card-top h2 {
+        font-size: 22px;
+    }
+
+    .verify-card-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .verify-otp {
+        gap: 7px;
+    }
+
+    .verify-otp-input {
+        height: 52px;
+        border-radius: 13px;
+        font-size: 21px;
+    }
+
+    .verify-submit {
+        height: 53px;
+    }
+
+    .verify-doodle {
+        opacity: 0.55;
+    }
+
+    .verify-doodle-compass {
+        top: 13%;
+        left: 3%;
+        transform: scale(0.7);
+    }
+
+    .verify-doodle-plane {
+        top: 14%;
+        right: 3%;
+        transform: scale(0.7) rotate(-18deg);
+    }
+
+    .verify-doodle-mountain {
+        bottom: 8%;
+        left: 2%;
+        transform: scale(0.7);
+    }
+
+    .verify-doodle-map {
+        right: 2%;
+        bottom: 10%;
+        transform: scale(0.7) rotate(7deg);
+    }
+
+    .verify-doodle-navigation {
+        display: none;
+    }
+
+    .verify-doodle-sparkle {
+        right: 10%;
+        top: 32%;
+    }
+
+    .verify-sticker {
+        display: none;
+    }
+
+    .verify-car-route {
+        bottom: 7%;
+        opacity: 0.55;
+    }
+
+    .verify-mountains {
+        height: 150px;
+    }
+
+    .verify-mountain {
+        border-left-width: 150px;
+        border-right-width: 150px;
+        border-bottom-width: 180px;
+    }
+
+    .verify-mountain::after {
+        left: -150px;
+        top: 38px;
+        border-left-width: 150px;
+        border-right-width: 150px;
+        border-bottom-width: 142px;
+    }
+
+}
+
+@media (max-width: 420px) {
+
+    .verify-main {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .verify-intro h1 {
+        font-size: 39px;
+    }
+
+    .verify-card {
+        padding: 20px;
+    }
+
+    .verify-card-top {
+        margin-bottom: 20px;
+    }
+
+    .verify-card-top h2 {
+        font-size: 20px;
+    }
+
+    .verify-otp {
+        gap: 5px;
+    }
+
+    .verify-otp-input {
+        height: 49px;
+        border-radius: 11px;
+        font-size: 20px;
+    }
+
+    .verify-footer {
+        display: none;
+    }
+
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .verify-stars span,
+    .verify-doodle,
+    .verify-car,
+    .verify-sticker {
+        animation: none;
+    }
+
+    .verify-submit,
+    .verify-submit::before,
+    .verify-resend button svg {
+        transition: none;
+    }
+
+}
