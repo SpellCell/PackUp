@@ -1,35 +1,9 @@
-import nodemailer from "nodemailer";
-// console.log("EMAIL:", process.env.EMAIL);
-// console.log(
-//     "EMAIL_PASSWORD loaded:",
-//     !!process.env.EMAIL_PASSWORD
-// );
-const transporter = nodemailer.createTransport({
-
-    service: "gmail",
-
-    auth: {
-
-        user: process.env.EMAIL,
-
-        pass: process.env.EMAIL_PASSWORD
-
-    }
-
-});
-
 export const sendEmail = async ({
-
     to,
-
     username,
-
     subject,
-
     heading,
-
     message
-
 }) => {
 
     const html = `
@@ -109,16 +83,58 @@ This email was sent automatically by PackUP.
 </html>
 `;
 
-    await transporter.sendMail({
+    const response = await fetch(
+        "https://api.brevo.com/v3/smtp/email",
+        {
+            method: "POST",
 
-        from: `"PackUP" <${process.env.EMAIL}>`,
+            headers: {
+                "accept": "application/json",
+                "api-key": process.env.BREVO_API_KEY,
+                "content-type": "application/json"
+            },
 
-        to,
+            body: JSON.stringify({
+                sender: {
+                    name: "PackUP",
+                    email: process.env.EMAIL
+                },
 
-        subject,
+                to: [
+                    {
+                        email: to,
+                        name: username
+                    }
+                ],
 
-        html
+                subject,
 
-    });
+                htmlContent: html
+            })
+        }
+    );
 
+    if (!response.ok) {
+
+        const errorData =
+            await response.text();
+
+        console.error(
+            "BREVO EMAIL ERROR:",
+            errorData
+        );
+
+        throw new Error(
+            `Email sending failed: ${response.status}`
+        );
+    }
+
+    const data = await response.json();
+
+    console.log(
+        "Email sent successfully:",
+        data.messageId
+    );
+
+    return data;
 };
