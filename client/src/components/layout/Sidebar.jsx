@@ -15,7 +15,11 @@ import {
     X
 } from "lucide-react";
 
-import { NavLink } from "react-router-dom";
+import {
+    NavLink,
+    useNavigate
+} from "react-router-dom";
+
 import { useAuth } from "../../context/AuthContext";
 
 const menu = [
@@ -72,11 +76,14 @@ const menu = [
 ];
 
 const Sidebar = ({ open, onClose }) => {
+    const navigate = useNavigate();
+
     const { user, logout } = useAuth();
 
     const handleLogout = () => {
         onClose();
         logout();
+        navigate("/");
     };
 
     const profileImage =
