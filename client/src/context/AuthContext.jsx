@@ -65,6 +65,8 @@ export const AuthProvider = ({ children }) => {
 
         setUser(null);
 
+        window.location.replace("/");
+
     };
 
     return (
