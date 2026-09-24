@@ -32,16 +32,14 @@ const Profile = () => {
         )}&background=635bff&color=fff&bold=true`;
 
     const handleLogout = () => {
-        logout();
         navigate("/");
+        logout();
     };
 
     return (
         <AppLayout>
 
             <div className="relative mx-auto w-full max-w-[1500px] overflow-hidden pb-12">
-
-                {/* Background travel elements */}
 
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
@@ -95,8 +93,6 @@ const Profile = () => {
 
                 <div className="relative z-10">
 
-                    {/* Header */}
-
                     <motion.div
                         initial={{
                             opacity: 0,
@@ -142,11 +138,7 @@ const Profile = () => {
 
                     </motion.div>
 
-                    {/* Main grid */}
-
                     <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
-
-                        {/* Profile identity card */}
 
                         <motion.div
                             initial={{
@@ -214,8 +206,6 @@ const Profile = () => {
                             </div>
 
                         </motion.div>
-
-                        {/* Information cards */}
 
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
@@ -423,8 +413,6 @@ const Profile = () => {
 
                     </div>
 
-                    {/* Quick links */}
-
                     <section className="mt-8">
 
                         <div className="mb-4">
@@ -484,8 +472,6 @@ const Profile = () => {
                         </div>
 
                     </section>
-
-                    {/* Logout */}
 
                     <motion.button
                         whileHover={{

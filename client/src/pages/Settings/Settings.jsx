@@ -24,16 +24,14 @@ const Settings = () => {
     const { logout } = useAuth();
 
     const handleLogout = () => {
-        logout();
         navigate("/");
+        logout();
     };
 
     return (
         <AppLayout>
 
             <div className="relative mx-auto w-full max-w-[1500px] overflow-hidden pb-12">
-
-                {/* Background */}
 
                 <div className="pointer-events-none absolute inset-0 overflow-hidden">
 
@@ -86,8 +84,6 @@ const Settings = () => {
 
                 <div className="relative z-10">
 
-                    {/* Header */}
-
                     <motion.div
                         initial={{
                             opacity: 0,
@@ -132,8 +128,6 @@ const Settings = () => {
                         </div>
 
                     </motion.div>
-
-                    {/* Settings cards */}
 
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
@@ -193,8 +187,6 @@ const Settings = () => {
 
                     </div>
 
-                    {/* Preferences */}
-
                     <section className="mt-8">
 
                         <div className="mb-4">
@@ -232,8 +224,6 @@ const Settings = () => {
                         </div>
 
                     </section>
-
-                    {/* Logout */}
 
                     <motion.button
                         whileHover={{

@@ -82,8 +82,8 @@ const Sidebar = ({ open, onClose }) => {
 
     const handleLogout = () => {
         onClose();
-        logout();
         navigate("/");
+        logout();
     };
 
     const profileImage =
