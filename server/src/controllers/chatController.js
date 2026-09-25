@@ -34,10 +34,6 @@ export const getChatHistory = async (req, res) => {
     try {
         const { tripId } = req.params;
 
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 30;
-        const skip = (page - 1) * limit;
-
         const { trip, hasAccess } =
             await hasChatAccess(
                 tripId,
@@ -59,11 +55,6 @@ export const getChatHistory = async (req, res) => {
             });
         }
 
-        const totalMessages =
-            await Message.countDocuments({
-                trip: tripId
-            });
-
         const chats = (
             await Message.find({
                 trip: tripId
@@ -75,19 +66,15 @@ export const getChatHistory = async (req, res) => {
                 .sort({
                     createdAt: 1
                 })
-                .skip(skip)
-                .limit(limit)
         ).filter(
             (chat) => chat.sender
         );
 
         res.status(200).json({
             success: true,
-            currentPage: page,
-            totalPages: Math.ceil(
-                totalMessages / limit
-            ),
-            totalMessages,
+            currentPage: 1,
+            totalPages: 1,
+            totalMessages: chats.length,
             chats
         });
 
@@ -117,6 +104,13 @@ export const getChatSummaries = async (req, res) => {
         const tripIds = trips.map(
             (trip) => trip._id
         );
+
+        if (tripIds.length === 0) {
+            return res.status(200).json({
+                success: true,
+                summaries: []
+            });
+        }
 
         const latestMessages =
             await Message.aggregate([
@@ -151,14 +145,6 @@ export const getChatSummaries = async (req, res) => {
                 }
             ]);
 
-        const readStates =
-            await ChatRead.find({
-                user: userId,
-                trip: {
-                    $in: tripIds
-                }
-            });
-
         const latestByTrip = new Map(
             latestMessages.map(
                 (message) => [
@@ -168,7 +154,70 @@ export const getChatSummaries = async (req, res) => {
             )
         );
 
+        const existingReadStates =
+            await ChatRead.find({
+                user: userId,
+                trip: {
+                    $in: tripIds
+                }
+            });
+
         const readByTrip = new Map(
+            existingReadStates.map(
+                (read) => [
+                    read.trip.toString(),
+                    read.lastReadAt
+                ]
+            )
+        );
+
+        const missingReadStates =
+            trips
+                .filter(
+                    (trip) =>
+                        !readByTrip.has(
+                            trip._id.toString()
+                        )
+                )
+                .map((trip) => {
+                    const latest =
+                        latestByTrip.get(
+                            trip._id.toString()
+                        );
+
+                    return {
+                        updateOne: {
+                            filter: {
+                                trip: trip._id,
+                                user: userId
+                            },
+                            update: {
+                                $setOnInsert: {
+                                    lastReadAt:
+                                        latest?.createdAt ||
+                                        new Date()
+                                }
+                            },
+                            upsert: true
+                        }
+                    };
+                });
+
+        if (missingReadStates.length > 0) {
+            await ChatRead.bulkWrite(
+                missingReadStates
+            );
+        }
+
+        const readStates =
+            await ChatRead.find({
+                user: userId,
+                trip: {
+                    $in: tripIds
+                }
+            });
+
+        const updatedReadByTrip = new Map(
             readStates.map(
                 (read) => [
                     read.trip.toString(),
@@ -177,53 +226,33 @@ export const getChatSummaries = async (req, res) => {
             )
         );
 
-        const unreadCounts =
-            await Message.aggregate([
-                {
-                    $match: {
-                        trip: {
-                            $in: tripIds
-                        },
-                        sender: {
-                            $ne: userId
-                        }
-                    }
-                },
-                {
-                    $group: {
-                        _id: "$trip",
-                        count: {
-                            $sum: 1
-                        }
-                    }
-                }
-            ]);
+        const summaries = await Promise.all(
+            trips.map(async (trip) => {
+                const tripKey =
+                    trip._id.toString();
 
-        const unreadByTrip = new Map(
-            unreadCounts.map(
-                (item) => [
-                    item._id.toString(),
-                    item.count
-                ]
-            )
-        );
-
-        const summaries = trips.map(
-            (trip) => {
                 const latest =
                     latestByTrip.get(
-                        trip._id.toString()
+                        tripKey
                     );
 
                 const lastReadAt =
-                    readByTrip.get(
-                        trip._id.toString()
+                    updatedReadByTrip.get(
+                        tripKey
                     );
 
-                const unread =
-                    unreadByTrip.get(
-                        trip._id.toString()
-                    ) || 0;
+                const unreadCount =
+                    lastReadAt
+                        ? await Message.countDocuments({
+                              trip: trip._id,
+                              sender: {
+                                  $ne: userId
+                              },
+                              createdAt: {
+                                  $gt: lastReadAt
+                              }
+                          })
+                        : 0;
 
                 return {
                     trip,
@@ -240,39 +269,10 @@ export const getChatSummaries = async (req, res) => {
                                       latest.sender
                               }
                             : null,
-                    unreadCount:
-                        lastReadAt
-                            ? unreadByTrip.get(
-                                  trip._id.toString()
-                              ) || 0
-                            : unread
+                    unreadCount
                 };
-            }
+            })
         );
-
-        for (const summary of summaries) {
-            const lastReadAt =
-                readByTrip.get(
-                    summary.trip._id.toString()
-                );
-
-            if (!lastReadAt) {
-                continue;
-            }
-
-            const count =
-                await Message.countDocuments({
-                    trip: summary.trip._id,
-                    sender: {
-                        $ne: userId
-                    },
-                    createdAt: {
-                        $gt: lastReadAt
-                    }
-                });
-
-            summary.unreadCount = count;
-        }
 
         res.status(200).json({
             success: true,
