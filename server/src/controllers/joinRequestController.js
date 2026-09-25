@@ -1,19 +1,22 @@
 import JoinRequest from "../models/JoinRequest.js";
 import Trip from "../models/Trip.js";
+import { createNotification } from "../services/notificationService.js";
 
 export const sendJoinRequest = async (req, res) => {
     try {
         const { tripCode } = req.body;
 
-        if (!tripCode) {
+        if (!tripCode || !tripCode.trim()) {
             return res.status(400).json({
                 success: false,
                 message: "Trip code is required."
             });
         }
 
+        const normalizedTripCode = tripCode.trim().toUpperCase();
+
         const trip = await Trip.findOne({
-            tripCode: tripCode.toUpperCase()
+            tripCode: normalizedTripCode
         });
 
         if (!trip) {
@@ -23,68 +26,66 @@ export const sendJoinRequest = async (req, res) => {
             });
         }
 
-        if (
-            trip.createdBy.toString() ===
-            req.user._id.toString()
-        ) {
+        const userId = req.user._id.toString();
+        const organizerId = trip.createdBy.toString();
+
+        if (organizerId === userId) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "You are the organizer of this trip."
+                message: "You are the organizer of this trip."
             });
         }
 
-        const alreadyParticipant =
-            trip.participants.some(
-                participant =>
-                    participant.toString() ===
-                    req.user._id.toString()
-            );
+        const alreadyParticipant = trip.participants.some(
+            participant => participant.toString() === userId
+        );
 
         if (alreadyParticipant) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "You are already a participant."
+                message: "You are already a participant."
             });
         }
 
-        if (
-            trip.currentMembers >=
-            trip.maxMembers
-        ) {
+        const actualMemberCount = trip.participants.length + 1;
+
+        if (actualMemberCount >= trip.maxMembers) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Trip is already full."
+                message: "Trip is already full."
             });
         }
 
-        const existingRequest =
-            await JoinRequest.findOne({
-                trip: trip._id,
-                requester: req.user._id,
-                status: "Pending"
-            });
+        const existingRequest = await JoinRequest.findOne({
+            trip: trip._id,
+            requester: req.user._id,
+            status: "Pending"
+        });
 
         if (existingRequest) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Join request already sent."
+                message: "Join request already sent."
             });
         }
 
-        const joinRequest =
-            await JoinRequest.create({
-                trip: trip._id,
-                requester: req.user._id
-            });
+        const joinRequest = await JoinRequest.create({
+            trip: trip._id,
+            requester: req.user._id
+        });
+
+        await createNotification({
+            recipient: trip.createdBy,
+            sender: req.user._id,
+            trip: trip._id,
+            type: "JOIN_REQUEST",
+            title: "New join request",
+            message: `${req.user.name} wants to join "${trip.title}".`
+        });
 
         res.status(201).json({
             success: true,
-            message:
-                "Join request sent successfully.",
+            message: "Join request sent successfully.",
             joinRequest
         });
     } catch (error) {
@@ -97,22 +98,18 @@ export const sendJoinRequest = async (req, res) => {
     }
 };
 
-export const getMyJoinRequests = async (
-    req,
-    res
-) => {
+export const getMyJoinRequests = async (req, res) => {
     try {
-        const requests =
-            await JoinRequest.find({
-                requester: req.user._id
-            })
-                .populate(
-                    "trip",
-                    "title source destination tripCode"
-                )
-                .sort({
-                    createdAt: -1
-                });
+        const requests = await JoinRequest.find({
+            requester: req.user._id
+        })
+            .populate(
+                "trip",
+                "title source destination tripCode currentMembers maxMembers status"
+            )
+            .sort({
+                createdAt: -1
+            });
 
         res.status(200).json({
             success: true,
@@ -128,24 +125,23 @@ export const getMyJoinRequests = async (
     }
 };
 
-export const getPendingJoinRequests = async (
-    req,
-    res
-) => {
+export const getPendingJoinRequests = async (req, res) => {
     try {
-        const requests =
-            await JoinRequest.find({
-                status: "Pending"
+        const requests = await JoinRequest.find({
+            status: "Pending"
+        })
+            .populate({
+                path: "trip",
+                select:
+                    "title source destination tripCode createdBy currentMembers maxMembers status"
             })
-                .populate({
-                    path: "trip",
-                    select:
-                        "title tripCode createdBy currentMembers maxMembers"
-                })
-                .populate(
-                    "requester",
-                    "name username email profileImage"
-                );
+            .populate(
+                "requester",
+                "name username email profileImage"
+            )
+            .sort({
+                createdAt: -1
+            });
 
         const pending = requests.filter(
             request =>
@@ -168,15 +164,11 @@ export const getPendingJoinRequests = async (
     }
 };
 
-export const acceptJoinRequest = async (
-    req,
-    res
-) => {
+export const acceptJoinRequest = async (req, res) => {
     try {
-        const request =
-            await JoinRequest.findById(
-                req.params.id
-            ).populate("trip");
+        const request = await JoinRequest.findById(
+            req.params.id
+        ).populate("trip");
 
         if (!request) {
             return res.status(404).json({
@@ -193,9 +185,11 @@ export const acceptJoinRequest = async (
             });
         }
 
+        const userId = req.user._id.toString();
+
         if (
             request.trip.createdBy.toString() !==
-            req.user._id.toString()
+            userId
         ) {
             return res.status(403).json({
                 success: false,
@@ -206,8 +200,7 @@ export const acceptJoinRequest = async (
         if (request.status !== "Pending") {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Request already processed."
+                message: "Request already processed."
             });
         }
 
@@ -233,10 +226,18 @@ export const acceptJoinRequest = async (
             request.status = "Accepted";
             await request.save();
 
+            await createNotification({
+                recipient: request.requester,
+                sender: req.user._id,
+                trip: request.trip._id,
+                type: "REQUEST_ACCEPTED",
+                title: "Join request accepted",
+                message: `Your request to join "${request.trip.title}" was accepted.`
+            });
+
             return res.status(200).json({
                 success: true,
-                message:
-                    "User is already a participant."
+                message: "User is already a participant."
             });
         }
 
@@ -244,13 +245,12 @@ export const acceptJoinRequest = async (
             request.trip.participants.length + 1;
 
         if (
-            actualMemberCount >=
+            actualMemberCount >
             request.trip.maxMembers
         ) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Trip is already full."
+                message: "Trip is already full."
             });
         }
 
@@ -261,8 +261,16 @@ export const acceptJoinRequest = async (
         await request.trip.save();
 
         request.status = "Accepted";
-
         await request.save();
+
+        await createNotification({
+            recipient: request.requester,
+            sender: req.user._id,
+            trip: request.trip._id,
+            type: "REQUEST_ACCEPTED",
+            title: "Join request accepted",
+            message: `Your request to join "${request.trip.title}" was accepted.`
+        });
 
         res.status(200).json({
             success: true,
@@ -278,15 +286,11 @@ export const acceptJoinRequest = async (
     }
 };
 
-export const rejectJoinRequest = async (
-    req,
-    res
-) => {
+export const rejectJoinRequest = async (req, res) => {
     try {
-        const request =
-            await JoinRequest.findById(
-                req.params.id
-            ).populate("trip");
+        const request = await JoinRequest.findById(
+            req.params.id
+        ).populate("trip");
 
         if (!request) {
             return res.status(404).json({
@@ -316,14 +320,21 @@ export const rejectJoinRequest = async (
         if (request.status !== "Pending") {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Request already processed."
+                message: "Request already processed."
             });
         }
 
         request.status = "Rejected";
-
         await request.save();
+
+        await createNotification({
+            recipient: request.requester,
+            sender: req.user._id,
+            trip: request.trip._id,
+            type: "REQUEST_REJECTED",
+            title: "Join request rejected",
+            message: `Your request to join "${request.trip.title}" was rejected.`
+        });
 
         res.status(200).json({
             success: true,
