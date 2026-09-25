@@ -15,6 +15,7 @@ import {
 } from "../controllers/tripController.js";
 
 import upload from "../middleware/uploadMiddleware.js";
+import tripUpload from "../middleware/tripUploadMiddleware.js";
 
 import validate from "../middleware/validate.js";
 
@@ -49,7 +50,7 @@ router.post(
 router.put(
     "/:id/upload-cover",
     protect,
-    upload.single("cover"),
+    tripUpload.single("cover"),
     uploadTripCover
 );
 
