@@ -551,15 +551,21 @@ export const uploadTripCover = async (req, res) => {
             );
         }
 
-        trip.coverImage = uploadResult.secure_url;
-        trip.coverImagePublicId = uploadResult.public_id;
-
-        await trip.save();
+        const updatedTrip = await Trip.findByIdAndUpdate(
+            trip._id,
+            {
+                coverImage: uploadResult.secure_url,
+                coverImagePublicId: uploadResult.public_id
+            },
+            {
+                new: true
+            }
+        );
 
         res.status(200).json({
             success: true,
             message: "Trip Cover Uploaded Successfully",
-            trip
+            trip: updatedTrip
         });
 
     } catch (error) {
