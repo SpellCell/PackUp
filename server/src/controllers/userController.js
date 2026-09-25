@@ -34,8 +34,8 @@ export const getProfile = asyncHandler(async (req, res) => {
 export const updateProfile = asyncHandler(async (req, res) => {
 
     const {
-
         name,
+        username,
         bio,
         gender,
         dateOfBirth,
@@ -43,7 +43,6 @@ export const updateProfile = asyncHandler(async (req, res) => {
         skills,
         instagram,
         linkedin
-
     } = req.body;
 
     const user = await User.findById(req.user._id);
@@ -53,6 +52,31 @@ export const updateProfile = asyncHandler(async (req, res) => {
         const error = new Error("User Not Found");
         error.statusCode = 404;
         throw error;
+
+    }
+
+    if (username !== undefined) {
+
+        const normalizedUsername = username.trim().toLowerCase();
+
+        if (normalizedUsername !== user.username) {
+
+            const usernameExists = await User.findOne({
+                username: normalizedUsername,
+                _id: { $ne: user._id }
+            });
+
+            if (usernameExists) {
+
+                const error = new Error("Username already taken");
+                error.statusCode = 400;
+                throw error;
+
+            }
+
+            user.username = normalizedUsername;
+
+        }
 
     }
 
@@ -86,7 +110,6 @@ export const updateProfile = asyncHandler(async (req, res) => {
 export const getUserById = asyncHandler(async (req, res) => {
 
     const user = await User.findById(req.params.id)
-
         .select("-password");
 
     if (!user) {
