@@ -39,11 +39,11 @@ export const createTrip = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.log("Trip cover upload error:", error);
 
         res.status(500).json({
             success: false,
-            message: "Internal Server Error"
+            message: error?.message || "Internal Server Error"
         });
 
     }
