@@ -524,14 +524,35 @@ export const uploadTripCover = async (req, res) => {
             });
         }
 
+        const uploadResult = await new Promise((resolve, reject) => {
+
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    folder: "PackUP",
+                    public_id: `trip-${trip._id}-${Date.now()}`,
+                    resource_type: "image"
+                },
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                }
+            );
+
+            stream.end(req.file.buffer);
+
+        });
+
         if (trip.coverImagePublicId) {
             await cloudinary.uploader.destroy(
                 trip.coverImagePublicId
             );
         }
 
-        trip.coverImage = req.file.path;
-        trip.coverImagePublicId = req.file.filename;
+        trip.coverImage = uploadResult.secure_url;
+        trip.coverImagePublicId = uploadResult.public_id;
 
         await trip.save();
 
